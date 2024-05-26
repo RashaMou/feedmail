@@ -1,4 +1,5 @@
 import typer
+from db import init_db
 
 app = typer.Typer()
 
@@ -33,6 +34,15 @@ def config():
     Set Fastmail config
     """
     pass
+
+
+@app.command()
+def initdb():
+    """
+    Initialize the database
+    """
+    init_db()
+    typer.echo("Database initialized")
 
 
 if __name__ == "__main__":
