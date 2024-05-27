@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -7,10 +9,10 @@ from sqlalchemy import (
     String,
     create_engine,
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 Base = declarative_base()
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///feeds.db")
 
 
 class Feed(Base):
@@ -35,13 +37,14 @@ class Post(Base):
     feed = relationship("Feed", back_populates="posts")
 
 
-engine = create_engine("sqlite:///feedmail.db", echo=True)
-Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def get_engine():
+    return create_engine(DATABASE_URL, echo=True)
 
 
-def get_db_session():
+def get_session(engine):
+    Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return Session()
 
 
-def init_db():
+def init_db(engine):
     Base.metadata.create_all(bind=engine)
