@@ -21,7 +21,7 @@ class Feed(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     url = Column(String(200), unique=True)
-    last_accessed = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, nullable=True)
     active = Column(Boolean, default=True)
     posts = relationship("Post", back_populates="feed")
 
