@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List, Tuple
 
 import typer
 from sqlalchemy import select
@@ -17,7 +18,7 @@ app = typer.Typer()
 def addfeed(
     name: Annotated[str, typer.Option(help="Feed name")],
     url: Annotated[str, typer.Option(help="Feed url")],
-):
+) -> None:
     """
     Add a feed to the database
     """
@@ -35,7 +36,7 @@ def addfeed(
 
 
 @app.command()
-def removefeed(feed_name: str):
+def removefeed(feed_name: str) -> None:
     """
     Remove a feed from the database by name
     """
@@ -54,16 +55,17 @@ def removefeed(feed_name: str):
 
 
 @app.command()
-def listfeeds():
+def listfeeds() -> List[Tuple[str, str]]:
     engine = get_engine()
     with get_session(engine) as session:
         stmt = select(Feed.name, Feed.url)
         result = session.execute(stmt)
-        feeds = result.all()
+        feeds = [(row.name, row.url) for row in result]
 
         for name, url in feeds:
-            typer.echo(f"Feed name: {name}\nUrl: {url}")
-            return feeds
+            typer.echo(f"Feed name: {name}\nUrl: {url}\n")
+
+        return feeds
 
 
 @app.command()
@@ -76,7 +78,7 @@ def config():
 
 
 @app.command()
-def initdb():
+def initdb() -> None:
     """
     Initialize the database
     """
