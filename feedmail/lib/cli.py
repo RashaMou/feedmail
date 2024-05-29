@@ -3,6 +3,7 @@ import sys
 
 import typer
 from sqlalchemy import select
+from typing_extensions import Annotated
 
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,7 +14,10 @@ app = typer.Typer()
 
 
 @app.command()
-def add(feed: str, name: str):
+def addfeed(
+    name: Annotated[str, typer.Option(help="Feed name")],
+    url: Annotated[str, typer.Option(help="Feed url")],
+):
     """
     Add a feed to the database
     """
@@ -21,8 +25,8 @@ def add(feed: str, name: str):
 
     with get_session(engine) as session:
         try:
-            new_feed = Feed(url=feed, name=name)
-            typer.echo(f"Adding feed: {feed} with name: {name}")
+            new_feed = Feed(url=url, name=name)
+            typer.echo(f"Adding feed: {url} with name: {name}")
             session.add(new_feed)
             session.commit()
         except Exception as e:
@@ -31,7 +35,7 @@ def add(feed: str, name: str):
 
 
 @app.command()
-def remove(feed_name: str):
+def removefeed(feed_name: str):
     """
     Remove a feed from the database by name
     """
@@ -50,10 +54,7 @@ def remove(feed_name: str):
 
 
 @app.command()
-def list():
-    """
-    #     List all the feeds by name and url
-    #"""
+def listfeeds():
     engine = get_engine()
     with get_session(engine) as session:
         stmt = select(Feed.name, Feed.url)
