@@ -21,9 +21,13 @@ class Feed(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     url = Column(String(200), unique=True)
-    updated_at = Column(DateTime, nullable=True)
+    last_modified = Column(DateTime, nullable=True)
+    etag = Column(String, nullable=True)
     active = Column(Boolean, default=True)
     posts = relationship("Post", back_populates="feed")
+
+    def __repr__(self):
+        return f"Feed:\n id: {self.id}, url: {self.url}, updated_at: {self.updated_at}, active: {self.active}, name: {self.name}"
 
 
 class Post(Base):
@@ -34,11 +38,12 @@ class Post(Base):
     title = Column(String(200))
     link = Column(String(200), unique=True)
     published = Column(DateTime)
+    content = Column(String)
     feed = relationship("Feed", back_populates="posts")
 
 
 def get_engine():
-    return create_engine(DATABASE_URL, echo=True)
+    return create_engine(DATABASE_URL)
 
 
 def get_session(engine):
