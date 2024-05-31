@@ -1,6 +1,13 @@
+import os
+import sys
+
 import typer
-from database.db_setup import Feed, get_engine, get_session, init_db
 from sqlalchemy import select
+
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
+from feedmail.database.db_setup import Feed, get_engine, get_session, init_db
 
 app = typer.Typer()
 
@@ -45,8 +52,8 @@ def remove(feed_name: str):
 @app.command()
 def list():
     """
-    List all the feeds by name and url
-    """
+    #     List all the feeds by name and url
+    #"""
     engine = get_engine()
     with get_session(engine) as session:
         stmt = select(Feed.name, Feed.url)
@@ -63,6 +70,7 @@ def config():
     """
     Set Fastmail config
     """
+    # if we don't have a config file specified, say so
     pass
 
 
