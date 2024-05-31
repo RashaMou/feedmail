@@ -1,0 +1,7 @@
+# Pycache and compiled python files.
+__pycache__/
+*py[cod]
+
+# database
+feeds.db
+
