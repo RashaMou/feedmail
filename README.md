@@ -1,6 +1,8 @@
 # FeedMail
 
-This Python program fetches RSS feeds and generates emails from them using Fastmail's JMAP client. It retrieves the latest news from the specified RSS feed, formats it into an email, and sends it to the specified recipient.
+This Python program fetches RSS feeds and sends emails of new posts using
+Fastmail's JMAP client. It retrieves the latest news from the specified RSS
+feed, formats it into an email, and sends it to the specified recipient.
 
 ## Features
 
@@ -8,32 +10,35 @@ This Python program fetches RSS feeds and generates emails from them using Fastm
 - Generates HTML-formatted email content from RSS feed items
 - Sends emails using Fastmail's JMAP protocol
 
-## Components
-
-- Database: Store RSS feed URLs, fetch status, and previously fetched posts.
-- Job Queue: Manage and retry failed fetches.
-- Cron Job: Schedule periodic execution.
-- Python Script: Fetch feeds, process posts, and send emails.
-- Python CLI: Add feed, list feed, remove feed, set config
-- Config: Store Fastmail/JMAP credentials
-- Logging
-
 ```
 ── feedmail
+├── __init__.py
+├── database
 │   ├── __init__.py
-│   ├── cli.py    Contains the command-line interface for managing feeds.
-│   ├── config.py  Handles configuration settings
-│   ├── db.py  Contains database connection setup and initialization
-│   ├── jmap_client.py  Manages sending email's using Fastmail
-│   ├── main.py  The main script to be executed by the cron job
-│   └── models.py  Defines the database schema using SQLAlchemy
+│   └── db_setup.py
+├── lib
+│   ├── __init__.py
+│   ├── cli.py
+│   ├── feedreader.py
+│   └── jmap_client.py
+└── main.py
 ```
 
-## Technical details
+## How it works
 
 - When a feed is added using the CLI interface, it is added to a database
-- The program periodically polls the urls in the database (though a cron job)
-- Every time the cron is run, we check the feed urls from the db and store posts
+- The program periodically checks the urls in the database for new feeds via a cron job
   after the last_fetched time in the DB feed table
-- We then send an email with all the new posts (or one email per feed? this
-  might be an option to set)
+- If new posts are found, each post is sent to the email specified in the config
+  file
+
+## How to use
+
+- Clone this repository
+- Install dependencies specified in `pyproject.toml`
+- To use this program, you need a Fastmail account and the ability to generate
+  an API token
+- Store the token in a config file (see `example_config.json`)
+- Run the `initdb` command in the CLI, and then add some feeds
+- Set up a cronjob to run `main.py` periodically, or just run it manually once a
+  day
