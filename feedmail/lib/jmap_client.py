@@ -1,5 +1,4 @@
 import json
-import logging
 from typing import Dict
 
 import requests
@@ -8,9 +7,9 @@ from feedmail import logger
 
 
 class JMAPClient:
-    def __init__(self, token: str, accountid: str, username: str, to: str):
+    def __init__(self, token: str, username: str, to: str):
         self.token = token
-        self.accountid = accountid
+        self.accountid: str = ""
         self.hostname = "https://api.fastmail.com/.well-known/jmap"
         self.session = {}
         self.draft_mailbox_id: str = ""
@@ -36,6 +35,7 @@ class JMAPClient:
             res.raise_for_status()
             self.session = res.json()
             self.api_url = self.session["apiUrl"]
+            self.accountid = self.session["accountId"]
         except requests.RequestException as e:
             logger.error(f"Failed to get session: {e}")
             raise
@@ -154,7 +154,6 @@ class JMAPClient:
                     ],
                 ],
             )
-            print(res)
         except KeyError as e:
             logger.error(f"Failed to send email: {e}")
             raise

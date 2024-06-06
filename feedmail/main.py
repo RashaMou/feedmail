@@ -23,11 +23,9 @@ def main():
     feedreader.parse_feeds()
 
     if feedreader.new_posts:
-        print("we have new posts")
         config = load_config()
         jmap = JMAPClient(
             token=config["token"],
-            accountid=config["accountid"],
             username=config["username"],
             to=config["to"],
         )
