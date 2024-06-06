@@ -1,0 +1,5 @@
+{
+  "token": "fmu1-xxxxxxxxxxxxxx",
+  "username": $fastmail_username,
+  "to": $to_email
+}
